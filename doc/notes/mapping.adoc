@@ -1,0 +1,98 @@
+= ASL to MASL Mapping
+
+xtUML Project Analysis Note
+
+== 1 Abstract
+
+This note documents the mapping of ASL statements and expressions onto MASL.
+
+== 2 Introduction and Background
+
+Asl part of the ASL2MASL project, a table is supplied enumerating the
+mapping of ASL statements and expressions onto MASL.
+
+== 3 Requirements
+
+In tabular form, list ASL statement/expressions and their MASL
+equivalents.
+
+== 4 Analysis
+
+=== 4.1 Token Mapping
+
+.ASL to MASL Token Mapping
+[options="header"]
+|===
+| description  | ASL        | MASL   | notes
+| AND          | '&', 'and' | 'and'  |
+| OR           | '\|', 'or' | 'or'   |
+| XOR          | 'xor'      | 'xor'  |
+|              |            |        |
+| NOT          | '!', 'not' | 'not'  |
+|===
+
+=== 4.2 Statement Mapping
+
+.ASL to MASL Statement Mapping
+[cols="2,3a,3a,1",options="header"]
+|===
+| description            | ASL                                                   | MASL                                                  | notes
+| assignStatement        | <variable> = <expression>                             | <expression> := <expression>;                         |
+| nullStatement          | <NEWLINE>                                             | ;                                                     |
+| callStatement          | [] = <operation_name> [ <argument>, ... ]             | <operation_name> ( <argument>, ... )                  |
+| exitStatement          | break                                                 | exit;                                                 |
+|                        | breakif <condition>                                   | exit when <condition>;                                |
+| deleteStatement        | delete <expression>                                   | delete <expression>;                                  |
+|                        | delete <expression> where <condition>                 | delete <expression> where <condition>;                |
+| linkStatement          | link <instance> <relspec> <instance>                  | link <instance> <relspec> <instance>;                 |
+|                        | unlink <instance> <relspec> <instance>                | unlink <instance> <relspec> <instance>;               |
+|                        | link <instance> <relspec> <instance> using <instance> | link <instance> <relspec> <instance> using <intance>; |
+| scheduleStatement      | [ <timerID> ] = Create_Timer [ ]                      | schedule <timerID> generate <event_name> ( <argument>, <argument> ... ) to <instance> delay <duration>; |
+|                        | generate TIM1:Set_Timer(<timerID>, <duration>, <units>, <event>, <instance>) |                                |
+| cancelTimerStatement   | generate TIM2:Reset_Timer( <timerID> )                | cancel <timerID>;                                     |
+| generateStatement      | generate <KL><number>::<eventName> ( <argument>, ... ) to <instance> | generate <class>.<event>( <argument>,... ) to <instance>; |
+| ifStatement            | if <condition> then                                   | if <condition> then                                   |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        | else                                                  | else                                                  |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        | endif                                                 | end if;                                               |
+| caseStatement          | switch <expression>                                   | case <expression> is                                  |
+|                        |   case <expression>                                   |   when <expression> =>                                |
+|                        |     <statements>                                      |     <statements>                                      |
+|                        |   default                                             |   when others  =>                                |
+|                        |     <statements>                                      |     <statements>                                      |
+|                        | endswitch                                             | end case;                                             |
+| forStatement           | for <instance> in { <instances> } do                  | for <instance> in <instances> loop                    |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        | endfor                                                | end loop;                                             |
+|                        | for [ <field1>, ... ] in { <structures> } do          | for uniquestructurename in <structures> loop          |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        |   a = field1                                          |   a := uniquestructurename.field1;                    |
+|                        | endfor                                                | end loop;                                             |
+| whileStatement         | loop                                                  | while ( true ) loop                                   |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        |   breakif                                             |   exit;                                               |
+|                        |   <statements>                                        |   <statements>                                        |
+|                        |   breakif <condition>                                 |   exit when <condition>;                              |
+|                        | endloop                                               | end loop;                                             |
+| structureInstantiation |                                                       |                                                       |
+| structureAssembly      |                                                       |                                                       |
+| startDomainContext     |                                                       |                                                       |
+| endDomainContext       |                                                       |                                                       |
+| description            |                                                       |                                                       |
+| AdaInline              |                                                       |                                                       |
+| Inline                 |                                                       |                                                       |
+
+|===
+
+=== 4.3 Expression Mapping
+
+== 5 Document References
+
+. [[dr-1]] https://support.onefact.net/issues/12575[12575 - ASL to MASL Mapping Document]
+
+---
+
+This work is licensed under the Creative Commons CC0 License
+
+---

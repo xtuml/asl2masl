@@ -1,0 +1,185 @@
+= ASL to MASL Translation
+
+xtUML Project Analysis Note
+
+== 1 Abstract
+
+Find here an analysis of approaches to converting ASL to MASL.  Background
+and requirements are supplied, and several options for meeting the
+requirements are explored.
+
+== 2 Introduction and Background
+
+ASL and MASL are action languages.  MASL is a superset of ASL supporting
+all of the functionality of ASL with stronger typing and collections.
+ASL maps onto MASL.
+
+There is a significant body of intellectual property (IP) shared in the
+form of xtUML/ASL models, namely the SWATS test suite.  It would be of
+significant benefit to the MASL-modeling community to have access to MASL
+versions of these xtUML/ASL models.  This note outlines a plan to convert
+ASL to MASL.  Such a converter enables xtUML/ASL IP to be accessed by MASL
+users.
+
+== 3 Requirements
+
+=== 3.1 ASL to MASL  
+ASL shall be converted to MASL.
+
+=== 3.2 Convertability  
+Any valid xtUML/ASL model shall be valid input for ASL to MASL translation.
+
+=== 3.3 Packaging  
+Output will adhere to the MASL Exporter model compiler tool chain.
+
+=== 3.4 Documentation  
+Provide a table with 2 columns that maps ASL statements on the left
+and corresponding MASL statements on the right.  
+
+== 4 Analysis
+
+There are several options in approach to take for this work.  A few are
+listed here and analyzed.  The option deemed most fitting is selected.
+
+=== 4.1 Perl Script  
+
+A Perl or Python script could be written that parses ASL and converts
+each ASL expression and statement into corresponding MASL expressions
+and statements.  Simple string substitutions and processing may be
+sufficient to achieve the conversion.
+
+==== 4.1.1 Pros  
+===== 4.1.1.1 simplistic  
+
+==== 4.1.2 Cons  
+===== 4.1.2.1
+
+Variable declarations would be a big challenge in this
+approach, because the script would not have scoped parsing.  
+
+===== 4.1.2.2
+There is no scientific and methodical set of steps to be taken.
+This would be a hack and not guaranteed to work.
+
+=== 4.4 Extend xtuml2masl  
+We have built an xtUML to MASL translator.  It consists of a set of
+modeled functions (`maslout`).  These functions query the xtUML
+metamodel and then sequence
+a set of messages carrying serialized MASL to another component (`masl`).
+`masl` populates itself with this string data.  A `render()` operation
+is then invoked which employees templating to output legal (structural)
+MASL.  This approach has been working well to export MASL from xtUML
+models.
+
+This model could be extended to include MASL activities.  Functions would
+be added to `maslout` to serialize ASL instances as serialized MASL.
+`masl` could be extended to populate a model of MASL Activity.  Templating
+could be used to emit legal MASL.
+
+There are a couple of ways to build the model of MASL Activity.  
+
+* Build a semantic model by hand analyzing the language.  
+* Programmatically onvert the MASL grammar into a class diagram AST (abstract syntax
+tree) which could be imported into BridgePoint and graphically reconciled.
+Layout of the class diagram would need to be done manually.
+
+==== 4.4.1 Pros  
+===== 4.4.1.1
+This approach is consistent with and a natural exension of our current approach.  
+
+===== 4.4.1.2 elegance  
+
+===== 4.4.1.3
+The model of MASL is a valuable asset.  Completing it by
+supplying the model of Activity increases its value.  
+
+===== 4.4.1.4
+There is an interesting experiment which models a language as
+syntax and semantics simultaneously.  The model of MASL Activity is a
+good candidate for this experiment and would help move model tranformation
+technology forward.
+
+==== 4.4.2 Cons  
+
+===== 4.4.2.1 This approach will take much longer than previous options.  
+
+===== 4.4.2.2 Making small modifications in this approach may be more expensive.  
+
+===== 4.4.2.3
+One of the fundamental reasons that makes this approach more
+expensive is that it implements all of MASL.  The requirements can be
+met by implementing only the parts of MASL necessary to map ASL.  
+
+=== 4.5 Parser-Based Conversion  
+There exists an antlr grammar of ASL.  We have antlr and Xtext grammars
+for MASL.  The conversion could be done in Java/xtend by walking the
+AST of ASL and populating an AST of MASL.
+
+4.5.1 Pros  
+
+4.5.1.1 This option could work quickly if done by an expert.  
+
+4.5.2 Cons  
+
+4.5.2.1 This approach would not advance the art of model transformation.  
+
+4.5.2.2 This approach is a bit slower and more cumbersome than some of
+the other options.  
+
+== 5 Work Required
+
+----
+6.1 Prepare Environment  
+6.1.1 branch  
+6.1.2 style requirement for RSL2ASL conversion  
+6.1.3 command line build  
+6.1.4 turning off C  
+6.1.5 packaging query  
+6.2 Expression  
+6.2.1 Update the archetypes and templates "in place" for the Value
+subsystem.  
+6.3 Statement  
+6.3.1 Update the archetypes and templates for the Body
+and related subsystems.  
+6.4 Testing  
+6.4.1 As each expression or statement type is tested, edit the
+generated MASL with the syntax highlighting and validating editor
+inside BridgePoint.  Note and correct errors.  
+6.4 Capturing the Work  
+6.4.1 Once the work is complete, consider compiling a special `mcmc`
+to be used in production.  Perhaps we could package it like `docgen`.  
+6.3 Maintain Mapping Table  
+
+6.x Variable Declarations  
+6.x.1 ASL uses implicit typing.  MASL uses explicit typing.
+Type declarations need to be produced for the output MASL.
+This has been done for the C model compiler by accumulating
+declarations into TE_BLK instances.  
+6.x.2 Provide initializers based on defaults for the types.  
+----
+
+== 6 Acceptance Test
+
+=== 6.1 MASL Editor  
+
+==== 6.1.1 The MASL editor will be used to test the generated MASL.
+In the presence of a valid `.mod` file, open the generated MASL in
+the activity editor and be sure there are no syntax errors highlighted.  
+
+==== 6.1.2 Visually inspect the generated MASL to be comfortable that
+translation preserved the original ASL functionality.  
+
+=== 6.2 Functional Tests  
+
+==== 6.2.1
+The ASL that we translate will test itself.  We can use examples
+from our test models.  
+
+== 7 Document References
+
+
+---
+
+This work is licensed under the Creative Commons CC0 License
+
+---
