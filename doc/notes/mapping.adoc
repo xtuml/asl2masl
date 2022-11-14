@@ -20,15 +20,39 @@ equivalents.
 
 === 4.1 Token Mapping
 
+This is not a complete set of tokens, but these highlight many of the
+surface syntax similarities and differences.
+
 .ASL to MASL Token Mapping
-[options="header"]
+[cols="2,3a,3a,2",options="header"]
 |===
-| description  | ASL        | MASL   | notes
-| AND          | '&', 'and' | 'and'  |
-| OR           | '\|', 'or' | 'or'   |
-| XOR          | 'xor'      | 'xor'  |
-|              |            |        |
-| NOT          | '!', 'not' | 'not'  |
+| description  | ASL                          | MASL         | notes
+| ABS          | count-of                     | abs          |
+| AND          | &, and                       | and          |
+| ASSIGN       | =, equals                    | :=           |
+| BREAK        | break                        |              | See 'exit'.
+| BREAKIF      | breakif                      |              | See 'exit when'.
+| CONCATENATE  | append                       | &            |
+| DISUNION     | disunion-of                  | disunion     |
+| EQUAL        | =, equals                    | =            |
+| EXIT         |                              | exit         | See 'break'.
+| FALSE        | FALSE                        | false        |
+| GT           | >,greater-than               | >            |
+| GTE          | >=, greater-than-or-equal-to | >=           |
+| INTERSECTION | intersection-of              | intersection |
+| NOT          | !, not                       | not          |
+| NOT_EQUAL    | !=, not-equals               | /=           |
+| NOT_IN       | not-in                       | not_in       |
+| LINK         | link, associate              | link         |
+| LT           | <, less-than                 | <            |
+| LTE          | <=, less-than-or-equal-to    | <=           |
+| ONE          | one-of                       | one          |
+| OR           | \|, or                       | or           |
+| ORDERED_BY   | ordered by                   | ordered_by   |
+| POWER        | ^                            | **           |
+| TRUE         | TRUE                         | true         |
+| UNION        | union-of                     | union        |
+| UNLINK       | unlink, unassociate          | unlink       |
 |===
 
 === 4.2 Statement Mapping
@@ -38,6 +62,7 @@ equivalents.
 |===
 | description            | ASL                                                   | MASL                                                  | notes
 | assignStatement        | <variable> = <expression>                             | <expression> := <expression>;                         |
+| set operation          | union-of { <set1> } and { <set2> }                    | <set1> union <set2>                                   |
 | nullStatement          | <NEWLINE>                                             | ;                                                     |
 | callStatement          | [] = <operation_name> [ <argument>, ... ]             | <operation_name> ( <argument>, ... )                  |
 | exitStatement          | break                                                 | exit;                                                 |
@@ -59,30 +84,36 @@ equivalents.
 | caseStatement          | switch <expression>                                   | case <expression> is                                  |
 |                        |   case <expression>                                   |   when <expression> =>                                |
 |                        |     <statements>                                      |     <statements>                                      |
-|                        |   default                                             |   when others  =>                                |
+|                        |   default                                             |   when others  =>                                     |
 |                        |     <statements>                                      |     <statements>                                      |
 |                        | endswitch                                             | end case;                                             |
-| forStatement           | for <instance> in { <instances> } do                  | for <instance> in <instances> loop                    |
+| forStatement           | for <instance> in { <set_of_instances> } do           | for <instance> in <set_of_instances> loop             |
 |                        |   <statements>                                        |   <statements>                                        |
+|                        |   a = <instance>.<attribute>                          |   a := <instance>.<attribute>;                        |
 |                        | endfor                                                | end loop;                                             |
-|                        | for [ <field1>, ... ] in { <structures> } do          | for uniquestructurename in <structures> loop          |
+|                        | for [ <field1>, ... ] in { <set_of_structures> } do   | for <uniquestructurename> in <structures> loop        | Note differences for structures.
 |                        |   <statements>                                        |   <statements>                                        |
-|                        |   a = field1                                          |   a := uniquestructurename.field1;                    |
+|                        |   a = <field1>                                        |   a := <uniquestructurename>.<field1>;                | Note field scoping.
 |                        | endfor                                                | end loop;                                             |
 | whileStatement         | loop                                                  | while ( true ) loop                                   |
 |                        |   <statements>                                        |   <statements>                                        |
-|                        |   breakif                                             |   exit;                                               |
+|                        |   break                                               |   exit;                                               |
 |                        |   <statements>                                        |   <statements>                                        |
 |                        |   breakif <condition>                                 |   exit when <condition>;                              |
 |                        | endloop                                               | end loop;                                             |
-| structureInstantiation |                                                       |                                                       |
-| structureAssembly      |                                                       |                                                       |
-| startDomainContext     |                                                       |                                                       |
-| endDomainContext       |                                                       |                                                       |
-| description            |                                                       |                                                       |
-| AdaInline              |                                                       |                                                       |
-| Inline                 |                                                       |                                                       |
-
+| structureInstantiation | { <empty_set_of_structures> } is <structuretyperef>   |                                                       | Add variable definition to code block.
+| structureAssembly      | append [ <field1>, ... ] to { <set_of_structures> }   | <set_of_structures> := <set_of_structures> & <seq>;   | roughly
+| startDomainContext     | $USE <domainkeyletters>                               |                                                       |
+| endDomainContext       | $ENDUSE                                               |                                                       |
+| description            | #$DESCRIPTION                                         |                                                       |
+|                        |   <text>                                              |                                                       |
+|                        | #$END_DESCRIPTION                                     |                                                       |
+| AdaInline              | #$ADA_INLINE                                          |                                                       |
+|                        |   <Ada code>                                          |                                                       |
+|                        | #$END_ADAINLINE                                       |                                                       |
+| Inline                 | $INLINE                                               |                                                       |
+|                        |   <code>                                              |                                                       |
+|                        | $ENDINLINE                                            |                                                       |
 |===
 
 === 4.3 Expression Mapping
