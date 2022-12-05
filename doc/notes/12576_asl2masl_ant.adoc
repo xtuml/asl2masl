@@ -1,0 +1,149 @@
+= ASL-to-MASL Conversion
+
+xtUML Project Analysis Note
+
+== 1 Abstract
+
+This note provides analysis of alternatives in the conversion of xtUML
+models with ASL activities into MASL with MASL activities.  The focus is
+on alternatives to the conversion of the action language.
+
+== 2 Introduction and Background
+
+The MC-Ada 2022 project leveraged the Stratus <<dr-2>> project which
+parses MASL into an OOA of MASL.  MC-Ada 2022 branched the stratus model and
+parser.  The portion of the parser that consumes structural MASL was left
+as-is thus populating the OOA of MASL with classes, attributes,
+associations, state machines and the remaining structural xtUML/MASL.
+
+The MASL activity parser was then modified to parse ASL.  Since ASL is
+very different from MASL, these changes were extensive.  An entirely new
+lexer was created.  And the parser follows the same order of production
+rules enabling ASL/MASL comparison but is significantly different from the
+original MASL parser.
+
+However, the OOA of MASL served well as a starting point for storing the
+parsed activity instances.  MASL is a superset of ASL with a few minor
+exceptions dealing with structured data types.  Thus, the OOA of MASL is
+able to contain all of the semantics of ASL.
+
+This is important background for the effort of converting ASL to MASL as
+it serves as a basis for this project.
+
+== 3 Requirements
+
+(copied from SRS <<dr-3>>)
+
+.Functional Requirements
+[cols="1,2,4a",options="header"]
+|===
+| ID    | Name | Description
+| https://support.onefact.net/issues/12575[12575] | mapping document |
+A document shall be produced that enumerates the mapping of ASL statements
+and expressions to MASL statements and expressions.
+| https://support.onefact.net/issues/12576[12576] | command line operation |
+A command line interface for initiating the conversion of an xtUML-with-ASL
+model into MASL shall be supplied with clear syntax on usage.
+| https://support.onefact.net/issues/12577[12577] | GUI operation |
+Optionally, a means for initiating xtUML-with-ASL to MASL conversion may
+be made available from within BridgePoint.
+| https://support.onefact.net/issues/12578[12578] | file packaging |
+The output file names, location and contents shall be clearly defined
+and documented.
+|===
+
+== 4 Analysis
+
+=== 4.1 Alternatives
+
+Three alternatives are identified to approach the conversion.  A
+script-oriented "sed/grep/awk" approach, a parse tree walker approach and
+a model traversal approach.  Each will be outlined below.  Understanding
+that ASL2MASL is kind-of-a "one and done" project, choosing an expedient
+approach is valid.
+
+==== 4.1.1 "sed/grep/awk"
+
+After preparing the mapping document <<dr-4>>, it may be straight-forward
+albeit brute force to simply write a script converter.  The script parse
+the lines of ASL and pattern-match and provide text substitution.
+
+This approach is totally inelegant but possible.  This approach does not
+leverage any existing work and is risky due to its __ad hoc__ nature.
+This approach provides very little lasting intellectual property.  This
+alternative is rejected.
+
+==== 4.1.2 Decorated Parse Tree Walking
+
+An antlr grammar for ASL was produced as deliverable for the work on
+MC-Ada.  This grammar could conceivably be decorated with actions that
+output textual MASL activities.
+
+This approach leverages existing IP and is a scientific approach.
+However, it does not advance our IP in any lasting way.  Although this
+approach may be relatively expedient, it is rejected.
+
+==== 4.1.3 Model Rendering
+
+For the MC-Ada project, a loader was also created.  We are fully parsing
+ASL and loading into an OOA of MASL (as described in the Introduction).
+So the best option for converting ASL to MASL is to parse ASL into the OOA
+of MASL and then render MASL from the OOA of MASL.  This is accomplished
+at the model level with modeled functions that select from the OOA of MASL
+and render textual MASL from the model instances.
+
+This is the option selected.
+
+=== 4.2 Model Rendering Options
+
+==== 4.2.1 Action Language Recursive Descent
+
+A couple days of initial investigation into navigating the OOA of MASL has
+been performed.  Initially the intent was for reasons of (re)familiarizing
+the OOA of MASL, however, significant progress was made that may be
+useful.
+
+The approach is pure action language.  Functions are named to be traceable
+to the OOA of MASL class for which they are rendering.  All string
+processing is done with OAL string arithmetic and the STRING EE.  This
+approach is proving quite workable and expedient.
+
+Patterns have emerged around subtyping, which is a substantial model
+construct in the OOA of MASL.
+
+==== 4.2.2 Open Questions
+
+* Do templates have a role?
+* file packaging?
+  ** borrow from masl model
+  ** borrow from Ciera?
+  ** easy enough to just do it
+
+=== 4.3 Changes to OOA of MASL
+
+==== 4.3.1 Loop Variable on LoopSpec
+
+I propose allowing for multiple loop index variables and thus change
+the multiplicity of R5154.
+
+==== 4.3.2 Comment
+
+I propose adding Comment as a subtype of Statement or in some other means.
+
+== 5 Work Required
+
+== 6 Acceptance Test
+
+
+== 7 Document References
+
+. [[dr-1]] https://support.onefact.net/issues/12571[12571 - ASL2MASL]
+. [[dr-2]] https://support.onefact.net/issues/11794[11794 - Parent task for project Stratus]
+. [[dr-3]] https://support.onefact.net/issues/12572[12572 - ASL to MASL SRS]
+. [[dr-4]] link:mapping.adoc[ASL2MASL Mapping]
+
+---
+
+This work is licensed under the Creative Commons CC0 License
+
+---

@@ -51,6 +51,7 @@ surface syntax similarities and differences.
 | ORDERED_BY   | ordered by                   | ordered_by   |
 | POWER        | ^                            | **           |
 | TRUE         | TRUE                         | true         |
+| UNDEFINED    | UNDEFINED                    | NULL         |
 | UNION        | union-of                     | union        |
 | UNLINK       | unlink, unassociate          | unlink       |
 |===
@@ -117,6 +118,15 @@ surface syntax similarities and differences.
 |===
 
 === 4.3 Expression Mapping
+
+.ASL to MASL Expression Mapping
+[cols="2,3a,3a,1",options="header"]
+|===
+| description            | ASL                                                   | MASL                                                  | notes
+| create                 | create <class> with <attribute> = <value>             | create <class> ( <attribute> => <value> )             | 
+| find                   | find <class>                                          | find <class>                                          | 
+|                        | find <class> with <attribute> = <value> & ...         | find <class> where ( <attribute> = <value> )          | 
+|===
 
 == 5 Document References
 
