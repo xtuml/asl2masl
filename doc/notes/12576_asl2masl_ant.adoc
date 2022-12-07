@@ -5,8 +5,8 @@ xtUML Project Analysis Note
 == 1 Abstract
 
 This note provides analysis of alternatives in the conversion of xtUML
-models with ASL activities into MASL with MASL activities.  The focus is
-on alternatives to the conversion of the action language.
+models with ASL activities into MASL with MASL activities.  The focus of
+the analysis is on alternatives to the conversion of the action language.
 
 == 2 Introduction and Background
 
@@ -59,23 +59,23 @@ and documented.
 Three alternatives are identified to approach the conversion.  A
 script-oriented "sed/grep/awk" approach, a parse tree walker approach and
 a model traversal approach.  Each will be outlined below.  Understanding
-that ASL2MASL is kind-of-a "one and done" project, choosing an expedient
-approach is valid.
+that ASL2MASL is something of a "one and done" project, choosing an
+expedient approach is appropriate.
 
 ==== 4.1.1 "sed/grep/awk"
 
-After preparing the mapping document <<dr-4>>, it may be straight-forward
-albeit brute force to simply write a script converter.  The script parse
-the lines of ASL and pattern-match and provide text substitution.
+After preparing the mapping document <<dr-4>>, it may seem straight-forward
+albeit brute force to simply write a script converter.  The script parses
+the lines of ASL and pattern-matches and provides text substitution.
 
-This approach is totally inelegant but possible.  This approach does not
-leverage any existing work and is risky due to its __ad hoc__ nature.
+This approach is totally inelegant but feasible.  This approach does not
+leverage any existing work and is risky due to the __ad hoc__ nature.
 This approach provides very little lasting intellectual property.  This
 alternative is rejected.
 
 ==== 4.1.2 Decorated Parse Tree Walking
 
-An antlr grammar for ASL was produced as deliverable for the work on
+An antlr grammar for ASL was produced as a deliverable for the work on
 MC-Ada.  This grammar could conceivably be decorated with actions that
 output textual MASL activities.
 
@@ -86,11 +86,14 @@ approach may be relatively expedient, it is rejected.
 ==== 4.1.3 Model Rendering
 
 For the MC-Ada project, a loader was also created.  We are fully parsing
-ASL and loading into an OOA of MASL (as described in the Introduction).
+ASL and loading it into an OOA of MASL (as described in the Introduction).
 So the best option for converting ASL to MASL is to parse ASL into the OOA
 of MASL and then render MASL from the OOA of MASL.  This is accomplished
 at the model level with modeled functions that select from the OOA of MASL
-and render textual MASL from the model instances.
+and render textual MASL from the model instances.  This follows the
+approach of model-based model compilers.  It has an additional benefit of
+vetting out the parsed ASL; this vetting will positively influence the
+MC-Ada 2023 project.
 
 This is the option selected.
 
@@ -98,42 +101,59 @@ This is the option selected.
 
 ==== 4.2.1 Action Language Recursive Descent
 
-A couple days of initial investigation into navigating the OOA of MASL has
-been performed.  Initially the intent was for reasons of (re)familiarizing
-the OOA of MASL, however, significant progress was made that may be
-useful.
+A couple of days of initial investigation into navigating the OOA of MASL
+has been performed.  Initially the intent was for reasons of
+(re)familiarizing the OOA of MASL, however, significant progress was made
+that may be useful.
 
-The approach is pure action language.  Functions are named to be traceable
-to the OOA of MASL class for which they are rendering.  All string
-processing is done with OAL string arithmetic and the STRING EE.  This
-approach is proving quite workable and expedient.
+The approach is pure action language.  Each function is named to be
+traceable to the particular class in the OOA of MASL for which it is
+rendering.  All string processing is done with OAL string arithmetic and
+the STRING EE.  This approach is proving quite workable and expedient.
 
 Patterns have emerged around subtyping, which is a substantial model
 construct in the OOA of MASL.
 
-==== 4.2.2 Open Questions
+===== 4.2.1.1 Templates
 
-* Do templates have a role?
-* file packaging?
-  ** borrow from masl model
-  ** borrow from Ciera?
-  ** easy enough to just do it
+Templates are useful when rendering languages with relatively complex
+multi-line transformations.  Templates are not needed in the translation
+to MASL.  String arithmetic will be adequate.
+
+==== 4.2.2 File Packaging
+
+File packaging and naming is encoded into the MASL Language Reference.
+Therefore, the algorithms for encoding the file names shall be included in
+the ASL2MASL translator.
 
 === 4.3 Changes to OOA of MASL
 
 ==== 4.3.1 Loop Variable on LoopSpec
 
-I propose allowing for multiple loop index variables and thus change
-the multiplicity of R5154.
+Initially ASL loop variables were parsed into the OOA of MASL as multiple
+variable definitions.  This is an incorrect approach.  Instead, we will
+create a single variable declaration for a structured data type.  The
+change made in stratus to R5154 (multiplicity change) will be reverted.
 
 ==== 4.3.2 Comment
 
 I propose adding Comment as a subtype of Statement or in some other means.
+It is important to capture comments while parsing ASL.  These comments
+need a home in the OOA of MASL.  A Comment class shall be added to the OOA
+of MASL and decorated with beginning and ending line and column numbers.
 
 == 5 Work Required
 
+. Update stratus to parse for loops with a single structure loop variable
+  instead of one for each field.  Basically recognize that 'destructuring'
+  is not supported in MASL.
+. Add 'Comment' to the OOA of MASL and populate it from the parser.
+. Move the ASL2MASL package in stratus up one level and name it 'render'.
+
 == 6 Acceptance Test
 
+Translate the ASL_Mapping model and compare to a hand-translated version
+of the same.
 
 == 7 Document References
 
