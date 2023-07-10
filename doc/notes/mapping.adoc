@@ -1,3 +1,6 @@
+1)      In Table 1, the row for BREAKIF says “See exit when”. Should there be a row EXITWHEN?
+2)      In Table 2 for assignStatement, should the MASL be the same as the ASL on the LHS of the expression ( ie <variable := <expression> )
+
 = ASL to MASL Mapping
 
 xtUML Project Analysis Note
@@ -45,7 +48,7 @@ surface syntax similarities and differences.
 | NOT_IN       | not-in                       | not_in       |
 | LINK         | link, associate              | link         |
 | LT           | <, less-than                 | <            |
-| LTE          | <=, less-than-or-equal-to    | <=           |
+| LTE          | +<=+, less-than-or-equal-to  | +<=+         |
 | ONE          | one-of                       | one          |
 | OR           | \|, or                       | or           |
 | ORDERED_BY   | ordered by                   | ordered_by   |
@@ -62,7 +65,8 @@ surface syntax similarities and differences.
 [cols="2,3a,3a,1",options="header"]
 |===
 | description            | ASL                                                   | MASL                                                  | notes
-| assignStatement        | <variable> = <expression>                             | <expression> := <expression>;                         |
+| assignStatement        | <variable> = <expression>                             | <variable> := <expression>;                           |
+|                        | <instance> = UNDEFINED                                | not allowed                                           |
 | set operation          | union-of { <set1> } and { <set2> }                    | <set1> union <set2>                                   |
 | nullStatement          | <NEWLINE>                                             | ;                                                     |
 | callStatement          | [] = <operation_name> [ <argument>, ... ]             | <operation_name> ( <argument>, ... )                  |

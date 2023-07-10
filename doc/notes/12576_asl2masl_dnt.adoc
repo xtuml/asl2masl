@@ -1,0 +1,80 @@
+= ASL to MASL Conversion
+
+xtUML Project Design Note
+
+== 1 Abstract
+
+<<dr-2>> provides analysis of the ASL-to-MASL conversion process.  This
+note documents design decisions taken during the development.
+
+== 2 Introduction and Background
+
+== 3 Requirements
+
+See <<dr-2>>.
+
+== 4 Analysis
+
+See <<dr-2>>.
+
+== 5 Design
+
+An ambiguity (at least context sensitivity is present in ASL in the double
+usage of the 'AND' operator as logical 'and' together with a separator in
+a list of attribute initializations in a 'create' statement.  This was
+overcome by allowing only unary expressions (which are lower in the
+expression hierarchy) in attribute initializations.  The present body of
+existing ASL adheres to this constraint.
+
+The following Template features are working well for ASL2MASL:
+
+* T::set_output_directory( dir: )
+* T::append( s: )
+* T::emit( filename: )
+
+Service signatures are generated.  It was considered to simply copy the
+signature from the input file and pass it to the renderer.  However, the
+renderer will be more complete if it simply operates from the populated
+metamodel.
+
+=== 5.1 TODO
+
+For comments, the mapping of input file line to output file line is not
+one-to-one.  Therefore, I will likely need to link comments to semantic
+elements like statement, code_block or other stuff.
+
+It is noted that ASL sets instance handles to 'UNDEFINED'.  This triggers
+the architecture to do something...
+
+ASL uses a double square bracket notation in a call statement that does
+not return anything.  This empty square bracket pair will and the
+accompanying assignment operator will need to be omitted.
+
+==== 5.1.1 Duplicate Domain Functions
+
+* UDT/Check_Constraint.svc
+* UDT/Check_Constraint.scn
+* TAGS/Perform_Static_Tests.svc
+* TAGS/Perform_Static_Tests.scn
+
+
+== 6 Design Comments
+
+== 7 User Documentation
+
+== 8 Unit Test
+
+== 9 Document References
+
+. [[dr-1]] https://support.onefact.net/issues/12576[12576 - ASL to MASL Command Line Interface]
+. [[dr-2]] link:12576_asl2masl_ant.adoc[ASL to MASL Conversion - xtuml Project Analysis Note]
+. [[dr-3]] https://support.onefact.net/issues/12571[12571 - ASL2MASL]
+. [[dr-4]] https://support.onefact.net/issues/12572[12572 - ASL to MASL SRS]
+. [[dr-5]] link:mapping.adoc[ASL2MASL Mapping]
+
+
+---
+
+This work is licensed under the Creative Commons CC0 License
+
+---
