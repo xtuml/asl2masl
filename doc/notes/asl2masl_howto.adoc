@@ -51,7 +51,7 @@ The preferred method of obtaining structural MASL input for asl2masl
 conversion is to run the MASL Export utility.  The MASL Exporter has been
 extended for ASL2MASL to detect a special mark ('version' on 'domain').
 This mark is used on all ASL models and is therefore used to
-detect ASL idiom models and produce all of the necessary `#pragma`
+detect ASL idiom models and produce all of the necessary 'pragma'
 statements needed for object key letters, operation numbers, etc.
 
 === 2.3 Textual ASL Input
@@ -187,7 +187,7 @@ ASL / MASL incompatibilities:
   ** There may need to be type conversions/promotions when
      casting and with the results of binary expressions.
 * Timer remaining time units depend upon the units used when setting the
-  timer.  MASL timers use time and timestamp values.  Even a manual
+  timer.  MASL timers use duration and timestamp values.  Even a manual
   process to convert the semantics may be a challenge.
 
 == 5 Source and Executable Artefacts
