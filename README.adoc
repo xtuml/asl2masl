@@ -1,2 +1,3 @@
-# asl2masl
+= asl2masl
+
 Convert ASL to MASL.
