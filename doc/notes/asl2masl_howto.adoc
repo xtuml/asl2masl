@@ -26,10 +26,10 @@ conversion step and finally textual rendering of ASL activities.
 
 === 2.1 Meta-Model:  OOA of MASL/ASL
 
-The OOA of MASL has been exteneded to support ASL activity syntax.  This
+The OOA of MASL has been extended to support ASL activity syntax.  This
 required small changes to the class diagram proper and substantial changes
 to the populator of the meta-model for the activities.  A whole new set of
-transformation action language was introduced to fulfill the conversion.
+transformation action language was introduced to fulfil the conversion.
 
 Statements and expression in activities refer to structural model elements
 like classes, function, events, etc.  The structural meta-model elements
@@ -37,7 +37,7 @@ must exist to be linked to these activity elements.  Thus, the structural
 elements are parsed and loaded from the MASL `.mod` file.  This implies
 that the `.mod` file must exist together with the input ASL activity
 files.  We will use the `.mod` file as exported with MASL Dumper, or
-preferrably, we the MASL Exporter (from the command line).
+preferably, we the MASL Exporter (from the command line).
 
 It is noted that the MASL Dumper suffers from a weakness of exporting type
 declarations with (potential) forward references.  The MASL Exporter
@@ -54,6 +54,23 @@ This mark is used on all ASL models and is therefore used to
 detect ASL idiom models and produce all of the necessary `#pragma`
 statements needed for object key letters, operation numbers, etc.
 
+=== 2.3 Textual ASL Input
+
+Input ASL is parsed from files exported with MASL Export.  In this format
+the ASL activities are couched within a file carrying a MASL-compliant
+activity signature.  The parser will parse the MASL signatures and then
+switch to ASL mode and parse the ASL action bodies.  And abstract syntax
+tree results which is then "walked" in a separate step to populate the OOA
+of ASL/MASL Activity.
+
+=== 2.4 Textual MASL Output
+
+Textual MASL is rendered from the populated OOA of ASL/MASL.  This is
+accomplished using string transformations on the metamodel elements.  A
+recursive descent/ascent approach is used navigating from the top level of
+an activity down through blocks and statement to the lowest "leaf" levels
+of expressions and literal values.
+
 == 3 HOWTO
 
 === 3.1 HOWTO Mark the Domain Version
@@ -65,7 +82,7 @@ domain with a version value.  The specific value of the version is not
 used, only its existence matters.
 
 Use the Marking Editor ("Manage Project Markings" from the project context
-menu in BridgePoint).  Mark the domain Component a version of any value.
+menu in BridgePoint).  Mark the domain Component with a version of any value.
 
 === 3.2 HOWTO Obtain a Marked `.mod` File
 
@@ -104,6 +121,27 @@ usage looks like this:
 Here is an example invocation:
 
  java -jar target/asl2masl.jar --mod ~/git/models/masl/SWATS/Struct/Struct.mod --asl
+
+=== 3.4 HOWTO Run the MASL C++ Generator
+
+After translating ASL to MASL, run the MASL C++ code generator to detect
+errors (and shortcomings) in the resulting MASL activity source.  The
+`.mod` file must be present (copied over) to get syntax-checking results.
+Usage of the MASL translator is as follow:
+
+  <path to MASL C++ translator>/masl-core -domainpath <path to MASL source> -mod <path to .mod file>
+
+where:
+
+* <path to MASL C++ translator> is the path to the location of the model
+  compiler.
+* <path to MASL source> is the location of the resulting MASL from
+  ASL-to-MASL translation (previous step).
+* <path to .mod file> explicitly names the `.mod` file within the MASL.
+
+An example invocation might look like:
+
+  ../masl-core/bin/masl-core -domainpath Struct -mod Struct/Struct.mod
 
 == 4 Limitations
 
@@ -148,23 +186,32 @@ ASL / MASL incompatibilities:
   ** Much of this is automatically cast by 'asl2masl'.
   ** There may need to be type conversions/promotions when
      casting and with the results of binary expressions.
-
-TODO:
-
-* complete mapping
-* timer remaining time units depend upon the units used when setting the
-  timer.  MASL timers use time and timestamp values.
+* Timer remaining time units depend upon the units used when setting the
+  timer.  MASL timers use time and timestamp values.  Even a manual
+  process to convert the semantics may be a challenge.
 
 == 5 Source and Executable Artefacts
 
-* https://1f-outgoing.s3.amazonaws.com/pub/asl2masl10July2023.jar
+* https://1f-outgoing.s3.amazonaws.com/pub/asl2masl10July2023.jar[ASL2MASL Java jar file]
++
+This is the 10 July 2023 version of the translator.  As it is refined, it
+will be republished here.
+
 * https://github.com/xtuml/asl2masl[ASL-to-MASL Documentation]
++
+This is a public git repository homing ASL-to-MASL documentation (design
+notes, HOWTOs, etc).
+
 * https://github.com/xtuml/masl/releases/tag/v3.0.2[MASL Code Generator and C++ Model Compiler]
 +
 The Java code generator is packaged in the zip file `masl-core.zip`.  The
 `masl-core` script provides a command line interface to the C++ code
 generator.  This is useful for identifying statements and expressions
 translated from ASL that are not compatible with native MASL.
+
+* https://github.com/cortlandstarrett/mc/tree/12576_asl2masl[ASL-to-MASL Source]
++
+ASL-to-MASL is a branch (12576_asl2masl) in the xtuml/mc git repository.
 
 == 7 Document References
 

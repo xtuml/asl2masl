@@ -1,6 +1,3 @@
-1)      In Table 1, the row for BREAKIF says “See exit when”. Should there be a row EXITWHEN?
-2)      In Table 2 for assignStatement, should the MASL be the same as the ASL on the LHS of the expression ( ie <variable := <expression> )
-
 = ASL to MASL Mapping
 
 xtUML Project Analysis Note
